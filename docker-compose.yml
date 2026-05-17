@@ -1,0 +1,33 @@
+services:
+  db:
+    image: postgres:15
+    container_name: linkvault-db
+    environment:
+      POSTGRES_DB: linkvault
+      POSTGRES_USER: linkvault_user
+      POSTGRES_PASSWORD: devpassword
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U linkvault_user -d linkvault"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: linkvault-app
+    ports:
+      - "5000:5000"
+    environment:
+      DB_HOST: db
+      DB_NAME: linkvault
+      DB_USER: linkvault_user
+      DB_PASS: devpassword
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
