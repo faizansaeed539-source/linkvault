@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LinkVault</title>
+    <style>
+        body { font-family: sans-serif; max-width: 700px; margin: 60px auto; padding: 0 20px; }
+        h1 { color: #2c3e50; }
+        input[type=text] { width: 70%; padding: 10px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; }
+        button { padding: 10px 20px; background: #2c3e50; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 40px; }
+        th, td { text-align: left; padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; }
+        th { background: #f8f9fa; color: #555; }
+        a { color: #2980b9; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .clicks { color: #27ae60; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>🔗 LinkVault</h1>
+    <p>Paste a long URL and get a short link instantly.</p>
+
+    <form action="/shorten" method="POST">
+        <input type="text" name="url" placeholder="https://example.com/very/long/url" required />
+        <button type="submit">Shorten</button>
+    </form>
+
+    {% if links %}
+    <table>
+        <thead>
+            <tr>
+                <th>Short Link</th>
+                <th>Original URL</th>
+                <th>Clicks</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for short_code, original_url, clicks in links %}
+            <tr>
+                <td><a href="/{{ short_code }}">/{{ short_code }}</a></td>
+                <td><a href="{{ original_url }}" target="_blank">{{ original_url[:60] }}{% if original_url|length > 60 %}...{% endif %}</a></td>
+                <td class="clicks">{{ clicks }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="color:#999; margin-top:40px;">No links yet. Shorten your first URL above.</p>
+    {% endif %}
+</body>
+</html>
