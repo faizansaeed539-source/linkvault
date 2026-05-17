@@ -6,7 +6,7 @@ import os
 
 app = Flask(__name__)
 
-# Database connection
+
 def get_db():
     conn = psycopg2.connect(
         host=os.getenv("DB_HOST", "localhost"),
@@ -16,12 +16,12 @@ def get_db():
     )
     return conn
 
-# Generate a random 6-character short code
+
 def generate_code(length=6):
     chars = string.ascii_letters + string.digits
     return ''.join(random.choices(chars, k=length))
 
-# Home page — show form and all links
+
 @app.route("/")
 def index():
     conn = get_db()
@@ -32,7 +32,7 @@ def index():
     conn.close()
     return render_template("index.html", links=links)
 
-# Shorten a URL
+
 @app.route("/shorten", methods=["POST"])
 def shorten():
     original_url = request.form.get("url")
@@ -50,7 +50,7 @@ def shorten():
     conn.close()
     return redirect("/")
 
-# Redirect short link to original URL
+
 @app.route("/<short_code>")
 def redirect_link(short_code):
     conn = get_db()
@@ -67,10 +67,11 @@ def redirect_link(short_code):
         abort(404)
     return redirect(result[0])
 
-# Health check endpoint
+
 @app.route("/health")
 def health():
     return {"status": "ok"}, 200
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
