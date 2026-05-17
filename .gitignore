@@ -7,3 +7,8 @@ nohup.out
 .env
 ansible/*.retry
 ansible/roles/linkvault/files/.env
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.backup
+ansible/roles/linkvault/files/.env
+*.pem
