@@ -5,3 +5,5 @@ __pycache__/
 backups/
 nohup.out
 .env
+ansible/*.retry
+ansible/roles/linkvault/files/.env

@@ -1,0 +1,11 @@
+---
+- name: Configure LinkVault Server
+  hosts: linkvault_servers
+  become: yes
+  vars:
+    db_password: "devpassword"
+
+  roles:
+    - docker
+    - linkvault
+    - monitoring
