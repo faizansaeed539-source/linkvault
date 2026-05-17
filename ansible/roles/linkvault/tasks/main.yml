@@ -1,0 +1,52 @@
+---
+- name: Create linkvault directory
+  file:
+    path: /home/{{ ansible_user }}/linkvault
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+- name: Create docker directory
+  file:
+    path: /home/{{ ansible_user }}/linkvault/docker
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+- name: Copy docker-compose.yml
+  copy:
+    src: docker-compose.yml
+    dest: /home/{{ ansible_user }}/linkvault/docker-compose.yml
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+- name: Copy init.sql
+  copy:
+    src: init.sql
+    dest: /home/{{ ansible_user }}/linkvault/docker/init.sql
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+- name: Create .env file from template
+  template:
+    src: env.j2
+    dest: /home/{{ ansible_user }}/linkvault/.env
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0600'
+
+- name: Pull latest LinkVault image
+  command: docker pull fasaeed539/linkvault:latest
+
+- name: Start LinkVault with Docker Compose
+  command: docker compose up -d
+  args:
+    chdir: /home/{{ ansible_user }}/linkvault
+
+- name: Set up backup cron job
+  cron:
+    name: "LinkVault database backup"
+    minute: "0"
+    hour: "2"
+    job: "/home/{{ ansible_user }}/linkvault/scripts/backup.sh"
+    user: "{{ ansible_user }}"
